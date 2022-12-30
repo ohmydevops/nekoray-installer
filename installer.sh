@@ -5,6 +5,12 @@ NEKORAY_FILE_NAME="nekoray-2.9-2022-12-19-linux64"
 NEKORAY_URL="https://github.com/MatsuriDayo/nekoray/releases/download/$NEKORAY_VERSION/$NEKORAY_FILE_NAME.zip"
 NEKORAY_SHORTCUT="$HOME/.local/share/applications/nekoray.desktop"
 
+# Check if installed or not
+if [ -d "$HOME/$NEKORAY_FILE_NAME" ]; then
+  echo -e "You already have this software installed in $HOME/$NEKORAY_FILE_NAME"
+  exit
+fi
+
 # Download NekoRay and move to current user home 
 if ! command -v unzip &> /dev/null
 then
