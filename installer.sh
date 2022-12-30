@@ -1,9 +1,8 @@
 #!/bin/bash
 
-NEKORAY_VERSION="2.9"
-NEKORAY_FILE_NAME="nekoray-2.9-2022-12-19-linux64"
-NEKORAY_URL="https://github.com/MatsuriDayo/nekoray/releases/download/$NEKORAY_VERSION/$NEKORAY_FILE_NAME.zip"
+NEKORAY_URL="https://api.github.com/repos/MatsuriDayo/nekoray/releases/latest"
 NEKORAY_SHORTCUT="$HOME/.local/share/applications/nekoray.desktop"
+NEKORAY_FILE_NAME="NekoRay"
 
 # Check if installed or not
 if [ -d "$HOME/$NEKORAY_FILE_NAME" ]; then
@@ -22,14 +21,17 @@ then
     echo -e "wget is not installed.\nInstall wget in your system.\nFor example: sudo apt install wget"
     exit
 fi
-wget "$NEKORAY_URL" -O /tmp/nekoray.zip
+wget -q -O- $NEKORAY_URL \
+| grep -E "browser_download_url.*linux" \
+| cut -d : -f 2,3 \
+| tr -d \" \
+| wget -O /tmp/nekoray.zip -i -
 unzip /tmp/nekoray.zip -d $HOME/$NEKORAY_FILE_NAME
 rm /tmp/nekoray.zip
 
 # Create Desktop icon for current user
 cat <<EOT >> $HOME/.local/share/applications/nekoray.desktop
 [Desktop Entry]
-Version=$NEKORAY_VERSION
 Name=NekoRay
 Comment=NekoRay
 Exec=$HOME/$NEKORAY_FILE_NAME/nekoray/nekoray
