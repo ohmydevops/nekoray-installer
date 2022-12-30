@@ -10,7 +10,7 @@ wget "$NEKORAY_URL" -O /tmp/nekoray.zip
 unzip /tmp/nekoray.zip -d $HOME/$NEKORAY_FILE_NAME
 rm /tmp/nekoray.zip
 
-# Create Desktop icon
+# Create Desktop icon for current user
 cat <<EOT >> $HOME/.local/share/applications/nekoray.desktop
 [Desktop Entry]
 Version=$NEKORAY_VERSION
