@@ -6,6 +6,16 @@ NEKORAY_URL="https://github.com/MatsuriDayo/nekoray/releases/download/$NEKORAY_V
 NEKORAY_SHORTCUT="$HOME/.local/share/applications/nekoray.desktop"
 
 # Download NekoRay and move to current user home 
+if ! command -v unzip &> /dev/null
+then
+    echo -e "unzip is not installed.\nInstall unzip in your system.\nFor example: sudo apt install unzip"
+    exit
+fi
+if ! command -v wget &> /dev/null
+then
+    echo -e "wget is not installed.\nInstall wget in your system.\nFor example: sudo apt install wget"
+    exit
+fi
 wget "$NEKORAY_URL" -O /tmp/nekoray.zip
 unzip /tmp/nekoray.zip -d $HOME/$NEKORAY_FILE_NAME
 rm /tmp/nekoray.zip
