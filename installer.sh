@@ -45,5 +45,5 @@ EOT
 # Permissions
 chown $USER:$USER $HOME/$NEKORAY_FILE_NAME/ -R
 
-# 5- done
+# Done
 echo -e "\nDone, type 'NekoRay' in your desktop!"
