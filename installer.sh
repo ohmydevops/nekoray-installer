@@ -3,6 +3,7 @@
 NEKORAY_URL="https://api.github.com/repos/MatsuriDayo/nekoray/releases/latest"
 NEKORAY_SHORTCUT="$HOME/.local/share/applications/nekoray.desktop"
 NEKORAY_FILE_NAME="NekoRay"
+WGET_TIMEOUT="15"
 
 # Check if installed or not
 if [ -d "$HOME/$NEKORAY_FILE_NAME" ]; then
@@ -21,15 +22,16 @@ then
     echo -e "wget is not installed.\nInstall wget in your system.\nFor example: sudo apt install wget"
     exit
 fi
-wget -q -O- $NEKORAY_URL \
-| grep -E "browser_download_url.*linux" \
-| cut -d : -f 2,3 \
-| tr -d \" \
-| wget -O /tmp/nekoray.zip -i -
+wget --timeout=$WGET_TIMEOUT -q -O- $NEKORAY_URL \
+ | grep -E "browser_download_url.*linux" \
+ | cut -d : -f 2,3 \
+ | tr -d \" \
+ | wget --timeout=$WGET_TIMEOUT -q --show-progress --progress=bar:force -O /tmp/nekoray.zip -i -
 unzip /tmp/nekoray.zip -d $HOME/$NEKORAY_FILE_NAME
 rm /tmp/nekoray.zip
 
 # Create Desktop icon for current user
+rm $HOME/.local/share/applications/nekoray.desktop
 cat <<EOT >> $HOME/.local/share/applications/nekoray.desktop
 [Desktop Entry]
 Name=NekoRay
@@ -44,6 +46,7 @@ EOT
 
 # Permissions
 chown $USER:$USER $HOME/$NEKORAY_FILE_NAME/ -R
+chmod +x $HOME/$NEKORAY_FILE_NAME/nekoray/nekoRay -R
 
 # Done
 echo -e "\nDone, type 'NekoRay' in your desktop!"
