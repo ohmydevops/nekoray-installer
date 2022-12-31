@@ -9,3 +9,7 @@ wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/in
 And finally 🎬:
 
 ![image](https://user-images.githubusercontent.com/21690865/210084763-160d2370-52f3-4791-b444-2181ece3341a.png)
+
+
+# FAQ
+- I cant run it on Debian based distribution -> https://github.com/MatsuriDayo/nekoray/issues/260
