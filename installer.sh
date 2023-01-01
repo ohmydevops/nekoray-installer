@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 NEKORAY_URL="https://api.github.com/repos/MatsuriDayo/nekoray/releases/latest"
 NEKORAY_SHORTCUT="$HOME/.local/share/applications/nekoray.desktop"
