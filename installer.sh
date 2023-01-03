@@ -50,7 +50,9 @@ unzip /tmp/nekoray.zip -d $HOME/$NEKORAY_FILE_NAME
 rm /tmp/nekoray.zip
 
 # Create Desktop icon for current user
+touch $HOME/.local/share/applications/nekoray.desktop
 rm $HOME/.local/share/applications/nekoray.desktop
+
 cat <<EOT >> $HOME/.local/share/applications/nekoray.desktop
 [Desktop Entry]
 Name=NekoRay
@@ -65,7 +67,7 @@ EOT
 
 # Permissions
 chown $USER:$USER $HOME/$NEKORAY_FILE_NAME/ -R
-chmod +x $HOME/$NEKORAY_FILE_NAME/nekoray/nekoRay -R
+chmod +x $HOME/$NEKORAY_FILE_NAME/nekoray/nekoray -R
 
 # Done
 echo -e "\nDone, type 'NekoRay' in your desktop!"
