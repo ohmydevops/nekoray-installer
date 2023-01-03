@@ -27,7 +27,7 @@ echo -e "\n${GREEN}███╗   ██╗███████╗██╗  �
 
 # Check if installed or not
 if [ -d "$HOME/$NEKORAY_FILE_NAME" ]; then
-  echo -e "You already have this software installed in $HOME/$NEKORAY_FILE_NAME"
+  echo -e "You already have this software installed in $HOME/$NEKORAY_FILE_NAME.\nPlease take a backup and delete it and run this script again!"
   exit
 fi
 
