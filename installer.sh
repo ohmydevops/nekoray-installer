@@ -4,6 +4,7 @@ set -e
 NEKORAY_URL="https://api.github.com/repos/MatsuriDayo/nekoray/releases/latest"
 NEKORAY_SHORTCUT="$HOME/.local/share/applications/nekoray.desktop"
 NEKORAY_FILE_NAME="NekoRay"
+NEKORAY_DESKTOPFILE="$HOME/.local/share/applications/nekoray.desktop"
 WGET_TIMEOUT="15"
 
 # Just for fun
@@ -50,10 +51,9 @@ unzip /tmp/nekoray.zip -d $HOME/$NEKORAY_FILE_NAME
 rm /tmp/nekoray.zip
 
 # Create Desktop icon for current user
-touch $HOME/.local/share/applications/nekoray.desktop
-rm $HOME/.local/share/applications/nekoray.desktop
+[ -e $NEKORAY_DESKTOPFILE ] && rm $NEKORAY_DESKTOPFILE
 
-cat <<EOT >> $HOME/.local/share/applications/nekoray.desktop
+cat <<EOT >> $NEKORAY_DESKTOPFILE
 [Desktop Entry]
 Name=NekoRay
 Comment=NekoRay
