@@ -1,7 +1,12 @@
 # Debian based OS requirements
 
 ```shell
-sudo apt install build-essential libfontconfig1 libqt5network5 libqt5widgets5 libqt5x11extras5 libqt5gui5
+sudo apt install build-essential \
+                 libfontconfig1 \
+                 libqt5network5 \
+                 libqt5widgets5 \
+                 libqt5x11extras5 \
+                 libqt5gui5
 ```
 
 # NekoRay Installer
