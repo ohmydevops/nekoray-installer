@@ -1,10 +1,19 @@
 # Prerequisites (Debian)
-sudo apt install build-essential
-sudo apt install libfontconfig1
 
-=> essential Qt5 libs needed
+```
+sudo apt install build-essential
+```
+```
+sudo apt install libfontconfig1
+```
+
+# essential Qt5 libs needed
+```
 sudo apt install libqt5gui5
+```
+```
 sudo apt install libqt5x11extras5
+```
 
 # NekoRay Installer
 
