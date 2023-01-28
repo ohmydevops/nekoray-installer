@@ -2,7 +2,6 @@
 set -e
 
 NEKORAY_URL="https://api.github.com/repos/MatsuriDayo/nekoray/releases/latest"
-NEKORAY_SHORTCUT="$HOME/.local/share/applications/nekoray.desktop"
 NEKORAY_FILE_NAME="NekoRay"
 NEKORAY_DESKTOPFILE="$HOME/.local/share/applications/nekoray.desktop"
 WGET_TIMEOUT="15"
