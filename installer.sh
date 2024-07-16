@@ -46,13 +46,12 @@ wget --timeout=$WGET_TIMEOUT -q -O- $NEKORAY_URL \
  | cut -d : -f 2,3 \
  | tr -d \" \
  | wget --timeout=$WGET_TIMEOUT -q --show-progress --progress=bar:force -O /tmp/nekoray.zip -i -
-unzip /tmp/nekoray.zip -d $HOME/$NEKORAY_FILE_NAME
-rm /tmp/nekoray.zip
+unzip /tmp/nekoray.zip -d $HOME/$NEKORAY_FILE_NAME && rm /tmp/nekoray.zip
 
 # Create Desktop icon for current user
 [ -e $NEKORAY_DESKTOPFILE ] && rm $NEKORAY_DESKTOPFILE
 
-cat <<EOT >> $NEKORAY_DESKTOPFILE
+cat <<EOT >> $NEKORAY_DESKTOPFILE 
 [Desktop Entry]
 Name=NekoRay
 Comment=NekoRay
