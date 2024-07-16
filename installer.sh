@@ -42,7 +42,7 @@ then
     exit
 fi
 wget --timeout=$WGET_TIMEOUT -q -O- $NEKORAY_URL \
- | grep -E "browser_download_url.*linux" \
+ | grep -E "browser_download_url.*linux64" \
  | cut -d : -f 2,3 \
  | tr -d \" \
  | wget --timeout=$WGET_TIMEOUT -q --show-progress --progress=bar:force -O /tmp/nekoray.zip -i -
