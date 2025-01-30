@@ -55,8 +55,8 @@ cat <<EOT >> $NEKORAY_DESKTOPFILE
 [Desktop Entry]
 Name=NekoRay
 Comment=NekoRay
-Exec=$HOME/$NEKORAY_FILE_NAME/nekoray/nekoray
-Icon=$HOME/$NEKORAY_FILE_NAME/nekoray/nekoray.png
+Exec=$HOME/$NEKORAY_FILE_NAME/nekoray/launcher
+Icon=$HOME/$NEKORAY_FILE_NAME/nekoray/nekobox.png
 Terminal=false
 StartupWMClass=NekoRay,nekoray,Nekoray,nekoRay
 Type=Application
@@ -65,7 +65,6 @@ EOT
 
 # Permissions
 chown $USER:$USER $HOME/$NEKORAY_FILE_NAME/ -R
-chmod +x $HOME/$NEKORAY_FILE_NAME/nekoray/nekoray -R
 
 # Done
 echo -e "\nDone, type 'NekoRay' in your desktop!"
