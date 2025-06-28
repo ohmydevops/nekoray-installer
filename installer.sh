@@ -1,7 +1,8 @@
 #!/bin/bash
 set -e
 
-NEKORAY_URL="https://api.github.com/repos/MatsuriDayo/nekoray/releases/latest"
+# NEKORAY_URL="https://api.github.com/repos/MatsuriDayo/nekoray/releases/latest"
+NEKORAY_URL="https://api.github.com/repos/Mahdi-zarei/nekoray/releases/latest"
 NEKORAY_FILE_NAME="NekoRay"
 NEKORAY_DESKTOPFILE="$HOME/.local/share/applications/nekoray.desktop"
 WGET_TIMEOUT="15"
@@ -41,6 +42,8 @@ then
     echo -e "wget is not installed.\nInstall wget in your system.\nFor example: sudo apt install wget"
     exit
 fi
+
+echo -e "Downloading the latest version of https://github.com/Mahdi-zarei/nekoray ...."
 wget --timeout=$WGET_TIMEOUT -q -O- $NEKORAY_URL \
  | grep -E "browser_download_url.*linux64" \
  | cut -d : -f 2,3 \
@@ -55,7 +58,7 @@ cat <<EOT >> $NEKORAY_DESKTOPFILE
 [Desktop Entry]
 Name=NekoRay
 Comment=NekoRay
-Exec=/bin/bash -c "pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY $HOME/$NEKORAY_FILE_NAME/nekoray/launcher"
+Exec=/bin/bash -c "pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY $HOME/$NEKORAY_FILE_NAME/nekoray/nekoray"
 Icon=$HOME/$NEKORAY_FILE_NAME/nekoray/nekobox.png
 Terminal=false
 StartupWMClass=nekobox
