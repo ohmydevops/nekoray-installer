@@ -13,9 +13,19 @@ sudo apt update && sudo apt install build-essential \
 
 Install latest [NekoRay](https://github.com/MatsuriDayo/nekoray) with desktop shortcut in your linux:
 
+## Install:
 ```shell
+
 wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/installer.sh | bash
 ```
+
+
+## Uninstall:
+```shell
+
+wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/uninstaller.sh | bash
+```
+
 
 🎬 And finally:
 
