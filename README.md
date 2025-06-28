@@ -15,14 +15,12 @@ Install latest [NekoRay](https://github.com/Mahdi-zarei/nekoray) with desktop sh
 
 ## Install:
 ```shell
-
 wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/installer.sh | bash
 ```
 
 
 ## Uninstall:
 ```shell
-
 wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/uninstaller.sh | bash
 ```
 
