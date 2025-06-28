@@ -58,7 +58,7 @@ Comment=NekoRay
 Exec=/bin/bash -c "pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY $HOME/$NEKORAY_FILE_NAME/nekoray/launcher"
 Icon=$HOME/$NEKORAY_FILE_NAME/nekoray/nekobox.png
 Terminal=false
-StartupWMClass=NekoRay,nekoray,Nekoray,nekoRay
+StartupWMClass=nekobox
 Type=Application
 Categories=Network
 EOT
