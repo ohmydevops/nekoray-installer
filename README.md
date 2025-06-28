@@ -11,7 +11,7 @@ sudo apt update && sudo apt install build-essential \
 
 # NekoRay Installer
 
-Install latest [NekoRay](https://github.com/MatsuriDayo/nekoray) with desktop shortcut in your linux:
+Install latest [NekoRay](https://github.com/Mahdi-zarei/nekoray) with desktop shortcut in your linux:
 
 ## Install:
 ```shell
