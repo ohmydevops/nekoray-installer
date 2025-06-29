@@ -58,7 +58,7 @@ cat <<EOT >> $NEKORAY_DESKTOPFILE
 [Desktop Entry]
 Name=NekoRay
 Comment=NekoRay
-Exec=/bin/bash -c "pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY $HOME/$NEKORAY_FILE_NAME/nekoray/nekoray"
+Exec=$HOME/$NEKORAY_FILE_NAME/nekoray/nekoray
 Icon=$HOME/$NEKORAY_FILE_NAME/nekoray/nekobox.png
 Terminal=false
 StartupWMClass=nekobox
