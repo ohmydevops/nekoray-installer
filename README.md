@@ -34,7 +34,6 @@ wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/un
 ## 🔐 Backup Config
 
 Create a backup of your NekoRay config folder ($HOME/NekoRay/nekoray/config):
-2
 ```
 wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/backup.sh | bash
 ```
