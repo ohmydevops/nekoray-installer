@@ -17,21 +17,27 @@ sudo apt update && sudo apt install build-essential \
 
 ## 🚀 Install
 
+```
 wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/installer.sh | bash
+```
 
 ------------------------------------------------------------
 
 ## ❌ Uninstall
 
+```
 wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/uninstaller.sh | bash
+```
 
 ------------------------------------------------------------
 
 ## 🔐 Backup Config
 
 Create a backup of your NekoRay config folder ($HOME/NekoRay/nekoray/config):
-
+2
+```
 wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/backup.sh | bash
+```
 
 A .zip file will be created in your current directory.
 
@@ -41,7 +47,9 @@ A .zip file will be created in your current directory.
 
 Restore your NekoRay config from a backup zip file:
 
+```
 bash <(wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/restore.sh) path/to/your-backup.zip
+```
 
 This will replace the current config folder with the one from the zip file.
 
