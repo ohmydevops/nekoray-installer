@@ -51,9 +51,3 @@ bash <(wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/
 ```
 
 This will replace the current config folder with the one from the zip file.
-
-------------------------------------------------------------
-
-🎬 And finally:
-
-https://user-images.githubusercontent.com/21690865/210084763-160d2370-52f3-4791-b44
