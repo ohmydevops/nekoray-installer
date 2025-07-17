@@ -51,3 +51,25 @@ bash <(wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/
 ```
 
 This will replace the current config folder with the one from the zip file.
+
+------------------------------------------------------------
+
+## 📡 Hotspot Control
+
+You can enable or disable your system hotspot using the provided scripts, first enable Tun Mode from Nekoray GUI then:
+
+### Turn Hotspot **On**
+
+```
+wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/hotspot-on.sh | bash
+```
+
+### Turn Hotspot **Off**
+
+```
+wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/hotspot-off.sh | bash
+```
+
+These scripts use `nmcli` to manage your network hotspot. Make sure you have NetworkManager installed and running.
+
+------------------------------------------------------------
