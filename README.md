@@ -1,79 +1,95 @@
-# NekoRay Installer
+# NekoRay Installer for Linux
 
-Install latest [NekoRay](https://github.com/Mahdi-zarei/nekoray) with desktop shortcut on your Linux.
+Easily install [NekoRay](https://github.com/Mahdi-zarei/nekoray) on Linux with desktop shortcut support.  
+Supports backup, restore, and Wi-Fi hotspot tunneling through Nekoray.
 
-------------------------------------------------------------
+---
 
-## 📦 Requirements (Debian-based OS)
+## 📦 1. Installation
 
+### ✅ Requirements (Debian-based distros)
+
+```bash
 sudo apt update && sudo apt install build-essential \
-                                    libfontconfig1 \
-                                    libqt5network5 \
-                                    libqt5widgets5 \
-                                    libqt5x11extras5 \
-                                    libqt5gui5
-
-------------------------------------------------------------
-
-## 🚀 Install
-
+    libfontconfig1 \
+    libqt5network5 \
+    libqt5widgets5 \
+    libqt5x11extras5 \
+    libqt5gui5
 ```
+
+### 🚀 Install NekoRay
+
+```bash
 wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/installer.sh | bash
 ```
 
-------------------------------------------------------------
+Creates a desktop shortcut and installs the latest release in your home directory.
 
-## ❌ Uninstall
+### ❌ Uninstall NekoRay
 
-```
+```bash
 wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/uninstaller.sh | bash
 ```
 
-------------------------------------------------------------
+Removes the installed files and shortcut.
 
-## 🔐 Backup Config
+---
 
-Create a backup of your NekoRay config folder:
-```
+## 🔐 2. Backup & Restore
+
+### 🗄 Backup Config
+
+Backup your NekoRay config folder to a `.zip` file:
+
+```bash
 wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/backup.sh | bash
 ```
 
-A .zip file will be created in your current directory.
+> This will create a file like `nekoray-backup-2025-07-17.zip` in the current directory.
 
-------------------------------------------------------------
+### ♻️ Restore Config
 
-## ♻️ Restore Config
+Restore your config from a backup zip:
 
-Restore your NekoRay config from a backup zip file:
-
-```
-bash <(wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/restore.sh) path/to/your-backup.zip
+```bash
+bash <(wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/restore.sh) path/to/backup.zip
 ```
 
-This will replace the current config folder with the one from the zip file.
+> It will replace your current config with the contents of the zip file.
 
-------------------------------------------------------------
+---
 
-## 📡 Hotspot Control
+## 📡 3. Hotspot Routing via NekoRay
 
-You can create a Wi-Fi hotspot using your wireless card and route all connected devices' traffic through Nekoray. First, make sure to enable Tun Mode in the Nekoray GUI.
+Tunnel all traffic from connected devices through Nekoray using a Wi-Fi hotspot.
 
-![enable tun mode](./tun-mode.png)
+### 🔧 Step 1: Enable Tun Mode
 
-Then:
+In the NekoRay GUI, go to `Settings` → enable **Tun Mode**:
 
-### Turn Hotspot **On**
+![Enable Tun Mode](./tun-mode.png)
 
-```
+---
+
+### 📶 Start Hotspot
+
+```bash
 wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/hotspot-on.sh | bash
 ```
 
-### Turn Hotspot **Off**
+Creates a Wi-Fi hotspot and redirects traffic through the VPN tunnel.
 
-```
+---
+
+### 📴 Stop Hotspot
+
+```bash
 wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/hotspot-off.sh | bash
 ```
 
-These scripts use `nmcli` to manage your network hotspot. Make sure you have NetworkManager installed and running.
+Turns off the hotspot and restores previous settings.
 
-------------------------------------------------------------
+> These scripts rely on `nmcli`. Ensure **NetworkManager** is installed and active.
+
+---
