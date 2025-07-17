@@ -5,6 +5,14 @@ Supports backup, restore, and Wi-Fi hotspot tunneling through Nekoray.
 
 ---
 
+## 📑 Table of Contents
+
+1. [📦 Installation](#installation)  
+2. [🔐 Backup & Restore](#backup--restore)  
+3. [📡 WiFi Hotspot Routing via NekoRay](#wifi-hotspot-routing-via-nekoray) 
+
+---
+
 ## 📦 1. Installation
 
 ### ✅ Requirements (Debian-based distros)
@@ -60,7 +68,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/
 
 ---
 
-## 📡 3. Hotspot Routing via NekoRay
+## 📡 3. WiFi Hotspot Routing via NekoRay
 
 Tunnel all traffic from connected devices through Nekoray using a Wi-Fi hotspot.
 
