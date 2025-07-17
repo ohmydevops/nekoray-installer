@@ -56,7 +56,11 @@ This will replace the current config folder with the one from the zip file.
 
 ## 📡 Hotspot Control
 
-You can enable or disable your system hotspot using the provided scripts, first enable Tun Mode from Nekoray GUI then:
+You can create a Wi-Fi hotspot using your wireless card and route all connected devices' traffic through Nekoray. First, make sure to enable Tun Mode in the Nekoray GUI.
+
+![enable tun mode](./tun-mode.png)
+
+Then:
 
 ### Turn Hotspot **On**
 
