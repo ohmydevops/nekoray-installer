@@ -7,9 +7,9 @@ Supports backup, restore, and Wi-Fi hotspot tunneling through Nekoray.
 
 ## 📑 Table of Contents
 
-1. [📦 Installation](#installation)  
-2. [🔐 Backup & Restore](#backup--restore)  
-3. [📡 WiFi Hotspot Routing via NekoRay](#wifi-hotspot-routing-via-nekoray) 
+1. [📦 Installation](#-1-installation)  
+2. [🔐 Backup & Restore](#-2-backup--restore)  
+3. [📡 WiFi Hotspot Routing via NekoRay](#-3-wifi-hotspot-routing-via-nekoray) 
 
 ---
 
