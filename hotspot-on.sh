@@ -33,14 +33,28 @@ run_cmd() {
 
 echo -e "\n${GREEN}🚀 Starting Nekoray Hotspot...${NC}"
 
-# Check nmcli
-if ! command -v nmcli &>/dev/null; then
-    echo -e "${RED}❌ 'nmcli' not found. Please install NetworkManager.${NC}"
-    echo -e "   Debian/Ubuntu: sudo apt install network-manager"
-    echo -e "   Fedora:        sudo dnf install NetworkManager"
-    echo -e "   Arch:          sudo pacman -S networkmanager"
-    exit 1
-fi
+# Check required commands
+for cmd in nmcli iw nft; do
+    if ! command -v "$cmd" &>/dev/null; then
+        echo -e "${RED}❌ '$cmd' command not found. Please install it.${NC}"
+        case "$cmd" in
+        nmcli)
+            echo -e "   Debian/Ubuntu: sudo apt install network-manager"
+            echo -e "   Fedora:        sudo dnf install NetworkManager"
+            echo -e "   Arch:          sudo pacman -S networkmanager"
+            ;;
+        iw)
+            echo -e "   Debian/Ubuntu: sudo apt install iw"
+            echo -e "   Fedora:        sudo dnf install iw"
+            echo -e "   Arch:          sudo pacman -S iw"
+            ;;
+        nft)
+            echo -e "   Debian/Ubuntu: sudo apt install nftables"
+            ;;
+        esac
+        exit 1
+    fi
+done
 
 # Detect Wi-Fi interface
 HOTSPOT_IFACE=$(nmcli device status | awk '$2 == "wifi" {print $1; exit}')
@@ -57,7 +71,18 @@ if ! sudo nft list table inet "$REQUIRED_INET_TABLE" &>/dev/null; then
     exit 1
 fi
 
-# Get passwrod from user
+echo -e "${GREEN}✅ Enabling Wi-Fi...${NC}"
+run_cmd "nmcli radio wifi on"
+
+# Check if a Wi-Fi hotspot is already active
+if iw dev "$HOTSPOT_IFACE" info 2>/dev/null | grep -q "type AP"; then
+    echo -e "${YELLOW}⚠ A Wi-Fi hotspot is already active on $HOTSPOT_IFACE. Skipping creation.${NC}"
+    exit 0
+fi
+
+echo -e "${GREEN}✅ Starting hotspot...${NC}"
+
+# Get password from user
 while true; do
     read -rsp $'\n🔒 Enter hotspot password (min 8 chars): ' PASSWORD
     echo
@@ -68,14 +93,12 @@ while true; do
     fi
 done
 
-echo -e "${GREEN}✅ Enabling Wi-Fi...${NC}"
-run_cmd "nmcli radio wifi on"
-
-echo -e "${GREEN}✅ Starting hotspot...${NC}"
-if ! $DRY_RUN && ! nmcli dev wifi hotspot ifname "$HOTSPOT_IFACE" ssid "$SSID" password "$PASSWORD"; then
+if ! $DRY_RUN && ! nmcli dev wifi hotspot ifname "$HOTSPOT_IFACE" ssid "$SSID" password "$PASSWORD" >/dev/null 2>&1; then
     echo -e "${RED}❌ Failed to start hotspot — maybe AP mode is unsupported.${NC}"
     exit 1
-elif $DRY_RUN; then
+fi
+
+if $DRY_RUN; then
     echo -e "${BLUE}→ nmcli dev wifi hotspot ifname \"$HOTSPOT_IFACE\" ssid \"$SSID\" password \"********\"${NC}"
 fi
 
@@ -90,8 +113,11 @@ run_cmd "sudo nft add rule ip $NFT_TABLE forward iifname \"$TUN_IFACE\" oifname 
 
 echo -e "\n${BOLD}${GREEN}✔ Hotspot is ready and running!${NC}\n"
 
-if $DRY_RUN; then
-    echo -e "${BLUE}→ nmcli dev wifi show-password${NC}"
-else
-    nmcli dev wifi show-password
-fi
+echo "SSID: $SSID"
+echo "Password: $PASSWORD"
+
+# if $DRY_RUN; then
+#     echo -e "${BLUE}→ nmcli dev wifi show-password${NC}"
+# else
+#     nmcli dev wifi show-password
+# fi
