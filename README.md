@@ -29,7 +29,7 @@ sudo apt update && sudo apt install build-essential \
 ### 🚀 Install NekoRay
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/installer.sh | bash
+wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/linux/installer.sh | bash
 ```
 
 Creates a desktop shortcut and installs the latest release in your home directory.
@@ -37,7 +37,7 @@ Creates a desktop shortcut and installs the latest release in your home director
 ### ❌ Uninstall NekoRay
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/uninstaller.sh | bash
+wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/linux/uninstaller.sh | bash
 ```
 
 Removes the installed files and shortcut.
@@ -51,7 +51,7 @@ Removes the installed files and shortcut.
 Backup your NekoRay config folder to a `.zip` file:
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/backup.sh | bash
+wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/linux/backup.sh | bash
 ```
 
 > This will create a file like `nekoray-backup-2025-07-17.zip` in the current directory.
@@ -61,7 +61,7 @@ wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/ba
 Restore your config from a backup zip:
 
 ```bash
-bash <(wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/restore.sh) path/to/backup.zip
+bash <(wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/linux/restore.sh) path/to/backup.zip
 ```
 
 > It will replace your current config with the contents of the zip file.
@@ -83,7 +83,7 @@ In the NekoRay GUI, go to `Settings` → enable **Tun Mode**:
 ### 📶 Start Hotspot
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/hotspot-on.sh | bash
+wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/linux/hotspot-on.sh | bash
 ```
 
 Creates a Wi-Fi hotspot and redirects traffic through the VPN tunnel.
@@ -93,7 +93,7 @@ Creates a Wi-Fi hotspot and redirects traffic through the VPN tunnel.
 ### 📴 Stop Hotspot
 
 ```bash
-wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/hotspot-off.sh | bash
+wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/linux/hotspot-off.sh | bash
 ```
 
 Turns off the hotspot and restores previous settings.
