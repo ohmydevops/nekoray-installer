@@ -84,6 +84,7 @@ In the NekoRay GUI, go to `Settings` → enable **Tun Mode**:
 
 ```bash
 wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/linux/hotspot-on.sh | bash
+
 ```
 
 Creates a Wi-Fi hotspot and redirects traffic through the VPN tunnel.
