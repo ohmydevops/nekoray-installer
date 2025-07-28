@@ -2,8 +2,8 @@
 set -e
 
 # NEKORAY_URL="https://api.github.com/repos/MatsuriDayo/nekoray/releases/latest"
-NEKORAY_URL="https://api.github.com/repos/Mahdi-zarei/nekoray/releases/latest"
-NEKORAY_FILE_NAME="NekoRay"
+NEKORAY_URL="https://api.github.com/repos/throneproj/Throne/releases/latest"
+NEKORAY_FILE_NAME="NekoRay" # Throne
 NEKORAY_DESKTOPFILE="$HOME/.local/share/applications/nekoray.desktop"
 WGET_TIMEOUT="15"
 
@@ -11,13 +11,13 @@ WGET_TIMEOUT="15"
 # Source: https://patorjk.com/software/taag/#p=display&v=1&f=ANSI%20Shadow&t=NekoRay%20Installer
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
-echo -e "\n${GREEN}███╗   ██╗███████╗██╗  ██╗ ██████╗ ██████╗  █████╗ ██╗   ██╗          
-████╗  ██║██╔════╝██║ ██╔╝██╔═══██╗██╔══██╗██╔══██╗╚██╗ ██╔╝          
-██╔██╗ ██║█████╗  █████╔╝ ██║   ██║██████╔╝███████║ ╚████╔╝           
-██║╚██╗██║██╔══╝  ██╔═██╗ ██║   ██║██╔══██╗██╔══██║  ╚██╔╝            
-██║ ╚████║███████╗██║  ██╗╚██████╔╝██║  ██║██║  ██║   ██║             
-╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝             
-██╗███╗   ██╗███████╗████████╗ █████╗ ██╗     ██╗     ███████╗██████╗ 
+echo -e "\n${GREEN}███╗   ██╗███████╗██╗  ██╗ ██████╗ ██████╗  █████╗ ██╗   ██╗
+████╗  ██║██╔════╝██║ ██╔╝██╔═══██╗██╔══██╗██╔══██╗╚██╗ ██╔╝
+██╔██╗ ██║█████╗  █████╔╝ ██║   ██║██████╔╝███████║ ╚████╔╝
+██║╚██╗██║██╔══╝  ██╔═██╗ ██║   ██║██╔══██╗██╔══██║  ╚██╔╝
+██║ ╚████║███████╗██║  ██╗╚██████╔╝██║  ██║██║  ██║   ██║
+╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝
+██╗███╗   ██╗███████╗████████╗ █████╗ ██╗     ██╗     ███████╗██████╗
 ██║████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██║     ██║     ██╔════╝██╔══██╗
 ██║██╔██╗ ██║███████╗   ██║   ███████║██║     ██║     █████╗  ██████╔╝
 ██║██║╚██╗██║╚════██║   ██║   ██╔══██║██║     ██║     ██╔══╝  ██╔══██╗
@@ -31,17 +31,13 @@ if [ -d "$HOME/$NEKORAY_FILE_NAME" ]; then
   exit
 fi
 
-# Download NekoRay and move to current user home 
-if ! command -v unzip &> /dev/null
-then
-    echo -e "unzip is not installed.\nInstall unzip in your system.\nFor example: sudo apt install unzip"
+# Download NekoRay and move to current user home
+for cmd in unzip wget; do
+  if ! command -v $cmd &> /dev/null; then
+    echo -e "$cmd is not installed.\nInstall $cmd in your system.\nFor example: sudo apt install $cmd"
     exit
-fi
-if ! command -v wget &> /dev/null
-then
-    echo -e "wget is not installed.\nInstall wget in your system.\nFor example: sudo apt install wget"
-    exit
-fi
+  fi
+done
 
 echo -e "Downloading the latest version of https://github.com/Mahdi-zarei/nekoray ...."
 wget --timeout=$WGET_TIMEOUT -q -O- $NEKORAY_URL \
@@ -54,7 +50,7 @@ unzip /tmp/nekoray.zip -d $HOME/$NEKORAY_FILE_NAME && rm /tmp/nekoray.zip
 # Create Desktop icon for current user
 [ -e $NEKORAY_DESKTOPFILE ] && rm $NEKORAY_DESKTOPFILE
 
-cat <<EOT >> $NEKORAY_DESKTOPFILE 
+cat <<EOT >> $NEKORAY_DESKTOPFILE
 [Desktop Entry]
 Name=NekoRay
 Comment=NekoRay
