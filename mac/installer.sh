@@ -63,7 +63,7 @@ wget --timeout=$WGET_TIMEOUT -q --show-progress --progress=bar:force \
 
 echo -e "Installing..."
 unzip -q "$TMPDIR/${THRONE_APP_NAME}.zip" -d "$TMPDIR"
-mv "$TMPDIR/${THRONE_APP_NAME}.app" "/Applications/"
+mv "$TMPDIR/${THRONE_APP_NAME}/${THRONE_APP_NAME}.app" "/Applications/"
 
 rm -rf "$TMPDIR"
 
