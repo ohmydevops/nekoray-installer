@@ -60,7 +60,7 @@ brew install wget unzip
 ### � Install Throne (NekoRay for macOS)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/arian24b/nekoray-installer/main/mac/installer.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/mac/installer.sh | bash
 ```
 
 Creates an application in `/Applications/Throne.app` and installs the latest release.
@@ -68,7 +68,7 @@ Creates an application in `/Applications/Throne.app` and installs the latest rel
 ### ❌ Uninstall
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/arian24b/nekoray-installer/main/mac/uninstaller.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/mac/uninstaller.sh | bash
 ```
 
 Removes the installed application and preferences.
@@ -90,7 +90,7 @@ wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/li
 Backup your NekoRay or Throne config:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/arian24b/nekoray-installer/main/mac/backup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/mac/backup.sh | bash
 ```
 
 > This will create a file like `nekoray-backup-2025-07-17.zip` in the current directory.
@@ -108,7 +108,7 @@ bash <(wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/
 Restore your config from a backup zip:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/arian24b/nekoray-installer/main/mac/restore.sh | bash -s path/to/backup.zip
+curl -fsSL https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/mac/restore.sh | bash -s path/to/backup.zip
 ```
 
 > It will replace your current config with the contents of the zip file.
