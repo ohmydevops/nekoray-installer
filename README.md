@@ -1,19 +1,20 @@
-# NekoRay Installer for Linux
+# NekoRay Installer
 
-Easily install [NekoRay](https://github.com/Mahdi-zarei/nekoray) on Linux with desktop shortcut support.  
+Easily install [NekoRay](https://github.com/Mahdi-zarei/nekoray) or [Throne](https://github.com/throneproj/Throne) on Linux and macOS with desktop shortcut support.
 Supports backup, restore, and Wi-Fi hotspot tunneling through Nekoray.
 
 ---
 
 ## 📑 Table of Contents
 
-1. [📦 Installation](#-1-installation)  
-2. [🔐 Backup & Restore](#-2-backup--restore)  
-3. [📡 WiFi Hotspot Routing via NekoRay](#-3-wifi-hotspot-routing-via-nekoray) 
+1. [� Linux Installation](#-linux-installation)
+2. [🍎 macOS Installation](#-macos-installation)
+3. [🔐 Backup & Restore](#-backup--restore)
+4. [📡 WiFi Hotspot Routing via NekoRay (Linux)](#-wifi-hotspot-routing-via-nekoray-linux)
 
 ---
 
-## 📦 1. Installation
+## � Linux Installation
 
 ### ✅ Requirements (Debian-based distros)
 
@@ -44,31 +45,77 @@ Removes the installed files and shortcut.
 
 ---
 
-## 🔐 2. Backup & Restore
+## 🍎 macOS Installation
+
+### ✅ Requirements
+
+```bash
+# Install Homebrew if not already installed
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install required dependencies
+brew install wget unzip
+```
+
+### � Install Throne (NekoRay for macOS)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/arian24b/nekoray-installer/main/mac/installer.sh | bash
+```
+
+Creates an application in `/Applications/Throne.app` and installs the latest release.
+
+### ❌ Uninstall
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/arian24b/nekoray-installer/main/mac/uninstaller.sh | bash
+```
+
+Removes the installed application and preferences.
+
+---
+
+## 🔐 Backup & Restore
 
 ### 🗄 Backup Config
 
+**Linux:**
 Backup your NekoRay config folder to a `.zip` file:
 
 ```bash
 wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/linux/backup.sh | bash
 ```
 
+**macOS:**
+Backup your NekoRay or Throne config:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/arian24b/nekoray-installer/main/mac/backup.sh | bash
+```
+
 > This will create a file like `nekoray-backup-2025-07-17.zip` in the current directory.
 
 ### ♻️ Restore Config
 
+**Linux:**
 Restore your config from a backup zip:
 
 ```bash
 bash <(wget -qO- https://raw.githubusercontent.com/ohmydevops/nekoray-installer/main/linux/restore.sh) path/to/backup.zip
 ```
 
+**macOS:**
+Restore your config from a backup zip:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/arian24b/nekoray-installer/main/mac/restore.sh | bash -s path/to/backup.zip
+```
+
 > It will replace your current config with the contents of the zip file.
 
 ---
 
-## 📡 3. WiFi Hotspot Routing via NekoRay
+## 📡 WiFi Hotspot Routing via NekoRay (Linux)
 
 Tunnel all traffic from connected devices through Nekoray using a Wi-Fi hotspot.
 
