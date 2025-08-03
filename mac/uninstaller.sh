@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 read -p "👉 Enter which app you want to delete (nekoray, throne): " APP_NAME
 APP_NAME=$(echo "$APP_NAME" | tr '[:upper:]' '[:lower:]')
