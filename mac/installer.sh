@@ -1,53 +1,72 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-# NEKORAY_URL="https://api.github.com/repos/MatsuriDayo/nekoray/releases/latest"
-NEKORAY_URL="https://api.github.com/repos/throneproj/Throne/releases/latest"
-NEKORAY_FILE_NAME="nekoray" # Throne
-NEKORAY_DESKTOPFILE="/Applications/$NEKORAY_FILE_NAME.app"
-WGET_TIMEOUT="15"
+THRONE_URL="https://api.github.com/repos/throneproj/Throne/releases/latest"
+THRONE_APP_NAME="Throne"
+THRONE_APP_PATH="/Applications/${THRONE_APP_NAME}.app"
 ARCH=$(uname -m)
 TMPDIR=$(mktemp -d)
+WGET_TIMEOUT=15
 
 # Just for fun
 # Source: https://patorjk.com/software/taag/#p=display&v=1&f=ANSI%20Shadow&t=NekoRay%20Installer
 GREEN='\033[0;32m'
-NC='\033[0m' # No Color
-echo -e "\n${GREEN}███╗   ██╗███████╗██╗  ██╗ ██████╗ ██████╗  █████╗ ██╗   ██╗
-████╗  ██║██╔════╝██║ ██╔╝██╔═══██╗██╔══██╗██╔══██╗╚██╗ ██╔╝
-██╔██╗ ██║█████╗  █████╔╝ ██║   ██║██████╔╝███████║ ╚████╔╝
-██║╚██╗██║██╔══╝  ██╔═██╗ ██║   ██║██╔══██╗██╔══██║  ╚██╔╝
-██║ ╚████║███████╗██║  ██╗╚██████╔╝██║  ██║██║  ██║   ██║
-╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝
+NC='\033[0m'
+
+cat <<EOF
+
+${GREEN}████████╗██╗  ██╗██████╗  ██████╗ ███╗   ██╗███████╗
+╚══██╔══╝██║  ██║██╔══██╗██╔═══██╗████╗  ██║██╔════╝
+   ██║   ███████║██████╔╝██║   ██║██╔██╗ ██║█████╗
+   ██║   ██╔══██║██╔══██╗██║   ██║██║╚██╗██║██╔══╝
+   ██║   ██║  ██║██║  ██║╚██████╔╝██║ ╚████║███████╗
+   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
 ██╗███╗   ██╗███████╗████████╗ █████╗ ██╗     ██╗     ███████╗██████╗
 ██║████╗  ██║██╔════╝╚══██╔══╝██╔══██╗██║     ██║     ██╔════╝██╔══██╗
 ██║██╔██╗ ██║███████╗   ██║   ███████║██║     ██║     █████╗  ██████╔╝
 ██║██║╚██╗██║╚════██║   ██║   ██╔══██║██║     ██║     ██╔══╝  ██╔══██╗
 ██║██║ ╚████║███████║   ██║   ██║  ██║███████╗███████╗███████╗██║  ██║
-╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝${NC}\n"
+╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝${NC}
 
+EOF
 
-# Check if installed or not
-if [ -d "$NEKORAY_DESKTOPFILE" ]; then
-  echo -e "You already have this software installed in $NEKORAY_DESKTOPFILE.\nPlease take a backup and delete it and run this script again!"
-  exit
+# Check if already installed
+if [ -d "$THRONE_APP_PATH" ]; then
+  echo -e "${THRONE_APP_NAME} is already installed at ${THRONE_APP_PATH}."
+  echo -e "Please back it up and delete it if you want to reinstall.\n"
+  exit 0
 fi
 
-# Download NekoRay and move to current user home
+# Check for required commands
 for cmd in unzip wget; do
   if ! command -v $cmd &> /dev/null; then
-    echo -e "$cmd is not installed.\nInstall $cmd in your system.\nFor example: sudo apt install $cmd"
-    exit
+    echo -e "Missing command: $cmd"
+    echo -e "Install it with: brew install $cmd"
+    exit 1
   fi
 done
 
-echo -e "Downloading the latest version of https://github.com/Mahdi-zarei/nekoray ...."
-wget --timeout=$WGET_TIMEOUT -q -O- $NEKORAY_URL \
- | grep -E "browser_download_url.*$NEKORAY_FILE_NAME.*macos-$ARCH.zip" \
- | cut -d '"' -f 4 \
- | wget --timeout=$WGET_TIMEOUT -q --show-progress --progress=bar:force -O $TMPDIR/nekoray.zip -i -
-unzip $TMPDIR/nekoray.zip -d $TMPDIR && mv $TMPDIR/$NEKORAY_FILE_NAME.app /Applications/ && rm -rf $TMPDIR
+# Fetch latest release download and install
+echo -e "Fetching latest ${THRONE_APP_NAME} release..."
+DOWNLOAD_URL=$(wget --timeout=$WGET_TIMEOUT -q -O- "$THRONE_URL" \
+  | grep -Eo "https.*${THRONE_APP_NAME}.*macos-${ARCH}\.zip" \
+  | head -n 1)
 
+if [ -z "$DOWNLOAD_URL" ]; then
+  echo "Failed to find download URL for macOS $ARCH."
+  exit 1
+fi
+
+echo -e "Downloading from: $DOWNLOAD_URL"
+wget --timeout=$WGET_TIMEOUT -q --show-progress --progress=bar:force \
+  -O "$TMPDIR/${THRONE_APP_NAME}.zip" "$DOWNLOAD_URL"
+
+echo -e "Installing..."
+unzip -q "$TMPDIR/${THRONE_APP_NAME}.zip" -d "$TMPDIR"
+mv "$TMPDIR/${THRONE_APP_NAME}.app" "/Applications/"
+
+rm -rf "$TMPDIR"
 
 # Done
-echo -e "\nDone, type 'NekoRay' in your desktop!"
+echo -e "\n✅ Done! ${THRONE_APP_NAME} has been installed to /Applications."
+echo -e "You can now launch '${THRONE_APP_NAME}' from Spotlight or Launchpad.\n"
