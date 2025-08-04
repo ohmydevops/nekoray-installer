@@ -16,17 +16,6 @@ Supports backup, restore, and Wi-Fi hotspot tunneling through Nekoray.
 
 ## � Linux Installation
 
-### ✅ Requirements (Debian-based distros)
-
-```bash
-sudo apt update && sudo apt install build-essential \
-    libfontconfig1 \
-    libqt5network5 \
-    libqt5widgets5 \
-    libqt5x11extras5 \
-    libqt5gui5
-```
-
 ### 🚀 Install NekoRay
 
 ```bash
