@@ -9,9 +9,9 @@ WGET_TIMEOUT=15
 TMPDIR=$(mktemp -d)
 
 # Hotspot Configuration
-SSID="ohmynekoray"
+SSID="ohmythrone"
 TUN_IFACE="nekoray-tun"
-NFT_TABLE="nekoray_hotspot"
+NFT_TABLE="throne_hotspot"
 REQUIRED_INET_TABLE="sing-box"
 
 # Colors for output
@@ -141,7 +141,23 @@ backup_config() {
 
   get_app_name
 
-  CONFIG_DIR="$HOME/$APP_NAME/$APP_NAME/config"
+  CONFIG_DIR=""
+  # Check for both old NekoRay and new Throne configs
+  if [[ "$APP_NAME" == "nekoray" ]]; then
+    # Support both old and new paths for NekoRay
+    if [ -d "$HOME/nekoray/nekoray/config" ]; then
+      CONFIG_DIR="$HOME/nekoray/nekoray/config"
+    elif [ -d "$HOME/NekoRay/nekoray/config" ]; then
+      CONFIG_DIR="$HOME/NekoRay/nekoray/config"
+    fi
+  elif [[ "$APP_NAME" == "throne" ]]; then
+    # New Throne path
+    if [ -d "$HOME/Throne/nekoray/config" ]; then
+      CONFIG_DIR="$HOME/Throne/nekoray/config"
+    elif [ -d "$HOME/throne/throne/config" ]; then
+      CONFIG_DIR="$HOME/throne/throne/config"
+    fi
+  fi
   BACKUP_NAME="${APP_NAME}-backup-$(date +%Y-%m-%d).zip"
   DEST_DIR="$(pwd)"
 
@@ -184,7 +200,26 @@ restore_config() {
 
   get_app_name
 
-  RESTORE_DIR="$HOME/$APP_NAME/$APP_NAME/config"
+  RESTORE_DIR=""
+  # Determine restore directory based on app name and what's installed
+  if [[ "$APP_NAME" == "nekoray" ]]; then
+    # For NekoRay, check if new Throne is installed and use that, otherwise use old path
+    if [ -d "$HOME/Throne" ]; then
+      RESTORE_DIR="$HOME/Throne/nekoray/config"
+      echo "Note: Restoring NekoRay backup to Throne installation"
+    elif [ -d "$HOME/NekoRay" ]; then
+      RESTORE_DIR="$HOME/NekoRay/nekoray/config"
+    else
+      RESTORE_DIR="$HOME/nekoray/nekoray/config"
+    fi
+  elif [[ "$APP_NAME" == "throne" ]]; then
+    # For Throne, use the new path
+    if [ -d "$HOME/Throne" ]; then
+      RESTORE_DIR="$HOME/Throne/nekoray/config"
+    else
+      RESTORE_DIR="$HOME/throne/throne/config"
+    fi
+  fi
 
   if ! command -v unzip &> /dev/null; then
     echo -e "${RED}'unzip' is required. Install it with:${NC}"
@@ -213,26 +248,35 @@ uninstall_app() {
 
   get_app_name
 
-  APP_DIR="$HOME/$APP_NAME"
-  APP_DESKTOP="$HOME/.local/share/applications/$APP_NAME.desktop"
-
   echo -e "\nUninstalling $APP_NAME..."
 
-  # Remove app directory
-  if [ -d "$APP_DIR" ]; then
-    echo "Removing app directory: $APP_DIR"
-    rm -rf "$APP_DIR"
-  else
-    echo "No app directory found at: $APP_DIR"
+  # Define possible directories and desktop files
+  APP_DIRS=()
+  APP_DESKTOPS=()
+
+  if [[ "$APP_NAME" == "nekoray" ]]; then
+    APP_DIRS=("$HOME/nekoray" "$HOME/NekoRay")
+    APP_DESKTOPS=("$HOME/.local/share/applications/nekoray.desktop")
+  elif [[ "$APP_NAME" == "throne" ]]; then
+    APP_DIRS=("$HOME/Throne" "$HOME/throne")
+    APP_DESKTOPS=("$HOME/.local/share/applications/throne.desktop")
   fi
 
-  # Remove desktop file
-  if [ -f "$APP_DESKTOP" ]; then
-    echo "Removing desktop file: $APP_DESKTOP"
-    rm -f "$APP_DESKTOP"
-  else
-    echo "No desktop file found at: $APP_DESKTOP"
-  fi
+  # Remove app directories
+  for APP_DIR in "${APP_DIRS[@]}"; do
+    if [ -d "$APP_DIR" ]; then
+      echo "Removing app directory: $APP_DIR"
+      rm -rf "$APP_DIR"
+    fi
+  done
+
+  # Remove desktop files
+  for APP_DESKTOP in "${APP_DESKTOPS[@]}"; do
+    if [ -f "$APP_DESKTOP" ]; then
+      echo "Removing desktop file: $APP_DESKTOP"
+      rm -f "$APP_DESKTOP"
+    fi
+  done
 
   echo -e "\n${GREEN}✅ $APP_NAME has been successfully uninstalled.${NC}\n"
 }
@@ -241,7 +285,7 @@ uninstall_app() {
 enable_hotspot() {
   echo -e "${BLUE}=== ENABLE HOTSPOT ===${NC}\n"
 
-  echo -e "${GREEN}🚀 Starting Nekoray Hotspot...${NC}"
+  echo -e "${GREEN}🚀 Starting Throne Hotspot...${NC}"
 
   # Parse dry-run option
   local dry_run=false
