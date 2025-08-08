@@ -1,35 +1,43 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-NEKORAY_FILE_NAME="NekoRay"
-NEKORAY_RESTORE_DIR="$HOME/$NEKORAY_FILE_NAME/nekoray/config"
-ZIP_FILE="$1"
+ZIP_FILE="${1:-}"
 
-if [ -z "$ZIP_FILE" ]; then
-  echo "❌ Please provide the path to the backup .zip file."
+if [[ -z "$ZIP_FILE" ]]; then
+  echo "Please provide the path to the backup .zip file."
   echo "Usage: $0 <backup-file.zip>"
   exit 1
 fi
 
-if [ ! -f "$ZIP_FILE" ]; then
-  echo "❌ File not found: $ZIP_FILE"
+if [[ ! -f "$ZIP_FILE" ]]; then
+  echo "File not found: $ZIP_FILE"
   exit 1
 fi
+
+read -rp "👉 Which app are you restoring? (nekoray, throne): " APP_NAME
+APP_NAME=$(echo "$APP_NAME" | tr '[:upper:]' '[:lower:]')
+
+if [[ "$APP_NAME" != "nekoray" && "$APP_NAME" != "throne" ]]; then
+  echo "Invalid app name. Only 'nekoray' or 'throne' allowed."
+  exit 1
+fi
+
+RESTORE_DIR="$HOME/$APP_NAME/$APP_NAME/config"
 
 if ! command -v unzip &> /dev/null; then
-  echo "❌ Please install unzip to restore backups."
-  echo "Debian: sudo apt install unzip"
+  echo "'unzip' is required. Install it with:"
+  echo "  Debian: apt install unzip"
   exit 1
 fi
 
-if [ -d "$NEKORAY_RESTORE_DIR" ]; then
-  echo "⚠️ Removing existing config folder: $NEKORAY_RESTORE_DIR"
-  rm -rf "$NEKORAY_RESTORE_DIR"
+if [[ -d "$RESTORE_DIR" ]]; then
+  echo "Removing existing config: $RESTORE_DIR"
+  rm -rf "$RESTORE_DIR"
 fi
 
-mkdir -p "$NEKORAY_RESTORE_DIR"
+mkdir -p "$RESTORE_DIR"
 
-echo "📦 Restoring config to $NEKORAY_RESTORE_DIR ..."
-unzip -q "$ZIP_FILE" -d "$NEKORAY_RESTORE_DIR"
+echo "📦 Restoring backup to: $RESTORE_DIR"
+unzip -q "$ZIP_FILE" -d "$RESTORE_DIR"
 
-echo "✅ Config restored successfully!"
+echo "✅ Restore complete!"

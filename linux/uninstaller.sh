@@ -1,26 +1,33 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-NEKORAY_FILE_NAME="NekoRay"
-NEKORAY_FOLDER="$HOME/$NEKORAY_FILE_NAME"
-NEKORAY_DESKTOPFILE="$HOME/.local/share/applications/nekoray.desktop"
+read -p "👉 Enter which app you want to delete (nekoray, throne): " APP_NAME
+APP_NAME=$(echo "$APP_NAME" | tr '[:upper:]' '[:lower:]')
 
-echo -e "\n🔧 Uninstalling NekoRay..."
-
-# Remove application folder with sudo
-if [ -d "$NEKORAY_FOLDER" ]; then
-  echo "Removing folder (using sudo): $NEKORAY_FOLDER"
-  sudo rm -rf "$NEKORAY_FOLDER"
-else
-  echo "No NekoRay folder found at $NEKORAY_FOLDER"
+if [[ "$APP_NAME" != "nekoray" && "$APP_NAME" != "throne" ]]; then
+  echo "Invalid app name. Only 'nekoray' or 'throne' allowed."
+  exit 1
 fi
 
-# Remove desktop shortcut (no sudo needed since it's in your home)
-if [ -f "$NEKORAY_DESKTOPFILE" ]; then
-  echo "Removing desktop entry: $NEKORAY_DESKTOPFILE"
-  rm -f "$NEKORAY_DESKTOPFILE"
+APP_PREFS_DIR="$HOME/$APP_NAME/$APP_NAME/config"
+APP_BUNDLE="$HOME/$APP_NAME/$APP_NAME.desktop"
+
+echo -e "\nUninstalling $APP_NAME..."
+
+# Remove app preferences folder
+if [ -d "$APP_PREFS_DIR" ]; then
+  echo "Removing preferences: $APP_PREFS_DIR"
+  sudo rm -rvf "$APP_PREFS_DIR"
 else
-  echo "No desktop entry found at $NEKORAY_DESKTOPFILE"
+  echo "No preferences folder found at: $APP_PREFS_DIR"
 fi
 
-echo -e "\n✅ NekoRay has been removed successfully."
+# Remove application bundle
+if [ -d "$APP_BUNDLE" ]; then
+  echo "Removing app bundle: $APP_BUNDLE"
+  sudo rm -rvf "$APP_BUNDLE"
+else
+  echo "No app found at: $APP_BUNDLE"
+fi
+
+echo -e "\n✅ $APP_NAME has been successfully uninstalled."
