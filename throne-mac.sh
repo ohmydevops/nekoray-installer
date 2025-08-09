@@ -246,5 +246,8 @@ main() {
   done
 }
 
+# Cleanup on exit
+trap 'rm -rf "$TMPDIR"' EXIT
+
 # Run main function
 main
