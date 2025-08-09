@@ -24,9 +24,11 @@ BOLD='\033[1m'
 
 # Display banner
 show_banner() {
+  echo -e "${YELLOW}"
   cat <<EOF
 
-${GREEN}
+
+
 ████████╗██╗  ██╗██████╗  ██████╗ ███╗   ██╗███████╗
 ╚══██╔══╝██║  ██║██╔══██╗██╔═══██╗████╗  ██║██╔════╝
    ██║   ███████║██████╔╝██║   ██║██╔██╗ ██║█████╗
@@ -39,11 +41,12 @@ ${GREEN}
 ██║██║╚██╗██║╚════██║   ██║   ██╔══██║██║     ██║     ██╔══╝  ██╔══██╗
 ██║██║ ╚████║███████║   ██║   ██║  ██║███████╗███████╗███████╗██║  ██║
 ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝
-${NC}
 
-${BLUE}Throne Installer for Linux${NC}
+
 
 EOF
+  echo -e "${NC}"
+  echo -e "${BLUE}$THRONE_APP_NAME Installer for macOS${NC}\n\n\n"
 }
 
 # Show main menu
@@ -86,53 +89,94 @@ install_app() {
   echo -e "${BLUE}=== INSTALLATION ===${NC}\n"
 
   # Check if already installed
-  if [ -d "$HOME/$THRONE_FILE_NAME" ]; then
-    echo -e "${YELLOW}You already have this software installed in $HOME/$THRONE_FILE_NAME.${NC}"
-    echo -e "${YELLOW}Please take a backup and delete it and run this script again!${NC}\n"
+  if dpkg -l | grep -q "throne" 2>/dev/null || rpm -q throne 2>/dev/null; then
+    echo -e "${YELLOW}Throne is already installed on your system.${NC}"
+    echo -e "${YELLOW}Please uninstall it first using your package manager.${NC}\n"
     return 0
   fi
 
+  # Detect Linux distribution
+  if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    DISTRO=$ID
+  else
+    echo -e "${RED}Cannot detect Linux distribution.${NC}"
+    exit 1
+  fi
+
+  # Determine package type and manager based on distribution
+  case "$DISTRO" in
+    ubuntu|debian|linuxmint|pop)
+      PACKAGE_TYPE="deb"
+      PACKAGE_MANAGER="dpkg"
+      INSTALL_CMD="sudo dpkg -i"
+      FIX_DEPS_CMD="sudo apt-get install -f -y"
+      PACKAGE_PATTERN="Throne.*debian.*\.deb"
+      ;;
+    fedora|rhel|centos|rocky|almalinux)
+      PACKAGE_TYPE="rpm"
+      PACKAGE_MANAGER="rpm"
+      INSTALL_CMD="sudo rpm -i"
+      FIX_DEPS_CMD="sudo dnf install -y"
+      PACKAGE_PATTERN="Throne.*\.el.*\.rpm"
+      ;;
+    *)
+      echo -e "${RED}Unsupported distribution: $DISTRO${NC}"
+      echo -e "${RED}Supported distributions: Ubuntu, Debian, Fedora, RHEL, CentOS${NC}"
+      exit 1
+      ;;
+  esac
+
   # Check for required commands
-  for cmd in unzip wget; do
+  for cmd in wget $PACKAGE_MANAGER; do
     if ! command -v $cmd &> /dev/null; then
       echo -e "${RED}$cmd is not installed.${NC}"
       echo -e "${RED}Install $cmd in your system.${NC}"
-      echo -e "${RED}For example: sudo apt install $cmd${NC}"
+      case "$DISTRO" in
+        ubuntu|debian|linuxmint|pop)
+          echo -e "${RED}For example: sudo apt install $cmd${NC}"
+          ;;
+        fedora|rhel|centos|rocky|almalinux)
+          echo -e "${RED}For example: sudo dnf install $cmd${NC}"
+          ;;
+      esac
       exit 1
     fi
   done
 
-  echo -e "Downloading the latest version of Throne..."
+  echo -e "Fetching latest Throne release information..."
 
-  # Download latest release
-  wget --timeout=$WGET_TIMEOUT -q -O- $THRONE_URL \
-   | grep -E "browser_download_url.*linux64" \
-   | cut -d : -f 2,3 \
-   | tr -d \" \
-   | wget --timeout=$WGET_TIMEOUT -q --show-progress --progress=bar:force -O /tmp/throne.zip -i -
+  # Get the latest release info and find the appropriate package URL
+  RELEASE_INFO=$(wget --timeout=$WGET_TIMEOUT -q -O- $THRONE_URL)
+  PACKAGE_URL=$(echo "$RELEASE_INFO" | grep -E "browser_download_url.*$PACKAGE_PATTERN" | head -1 | cut -d '"' -f 4)
 
-  unzip /tmp/throne.zip -d $HOME/$THRONE_FILE_NAME && rm /tmp/throne.zip
+  if [ -z "$PACKAGE_URL" ]; then
+    echo -e "${RED}Could not find $PACKAGE_TYPE package in the latest release.${NC}"
+    echo -e "${RED}Available packages:${NC}"
+    echo "$RELEASE_INFO" | grep "browser_download_url" | cut -d '"' -f 4 | sed 's/.*\///g'
+    exit 1
+  fi
 
-  # Create Desktop icon for current user
-  [ -e $THRONE_DESKTOP_FILE ] && rm $THRONE_DESKTOP_FILE
-  mkdir -p "$(dirname "$THRONE_DESKTOP_FILE")"
+  PACKAGE_NAME=$(basename "$PACKAGE_URL")
+  echo -e "Downloading $PACKAGE_NAME..."
 
-  cat <<EOT >> $THRONE_DESKTOP_FILE
-[Desktop Entry]
-Name=Throne
-Comment=Throne
-Exec=$HOME/$THRONE_FILE_NAME/nekoray/nekoray
-Icon=$HOME/$THRONE_FILE_NAME/nekoray/nekobox.png
-Terminal=false
-StartupWMClass=nekobox
-Type=Application
-Categories=Network
-EOT
+  # Download the package
+  wget --timeout=$WGET_TIMEOUT -q --show-progress --progress=bar:force -O "$TMPDIR/$PACKAGE_NAME" "$PACKAGE_URL"
 
-  # Permissions
-  chown $USER:$USER $HOME/$THRONE_FILE_NAME/ -R
+  echo -e "Installing Throne $PACKAGE_TYPE package..."
 
-  echo -e "\n${GREEN}✅ Done! Type 'Throne' in your desktop!${NC}\n"
+  # Install the package
+  if $INSTALL_CMD "$TMPDIR/$PACKAGE_NAME"; then
+    echo -e "${GREEN}✅ Throne installed successfully!${NC}"
+  else
+    echo -e "${YELLOW}Installation completed with some warnings. Fixing dependencies...${NC}"
+    $FIX_DEPS_CMD
+  fi
+
+  # Clean up
+  rm "$TMPDIR/$PACKAGE_NAME"
+
+  echo -e "\n${GREEN}✅ Done! Throne has been installed system-wide. You can find it in your applications menu!${NC}\n"
 }
 
 # Backup function
@@ -246,39 +290,71 @@ restore_config() {
 uninstall_app() {
   echo -e "${BLUE}=== UNINSTALL ===${NC}\n"
 
-  get_app_name
-
-  echo -e "\nUninstalling $APP_NAME..."
-
-  # Define possible directories and desktop files
-  APP_DIRS=()
-  APP_DESKTOPS=()
-
-  if [[ "$APP_NAME" == "nekoray" ]]; then
-    APP_DIRS=("$HOME/nekoray" "$HOME/NekoRay")
-    APP_DESKTOPS=("$HOME/.local/share/applications/nekoray.desktop")
-  elif [[ "$APP_NAME" == "throne" ]]; then
-    APP_DIRS=("$HOME/Throne" "$HOME/throne")
-    APP_DESKTOPS=("$HOME/.local/share/applications/throne.desktop")
+  # Check for package installations first
+  PACKAGE_INSTALLED=false
+  if dpkg -l | grep -q "throne" 2>/dev/null; then
+    echo "Removing Throne .deb package..."
+    sudo dpkg -r throne
+    PACKAGE_INSTALLED=true
+  elif rpm -q throne 2>/dev/null; then
+    echo "Removing Throne .rpm package..."
+    sudo rpm -e throne
+    PACKAGE_INSTALLED=true
   fi
 
-  # Remove app directories
-  for APP_DIR in "${APP_DIRS[@]}"; do
-    if [ -d "$APP_DIR" ]; then
-      echo "Removing app directory: $APP_DIR"
-      rm -rf "$APP_DIR"
+  # Check for legacy directory installations
+  LEGACY_FOUND=false
+
+  # Check for various possible legacy installation directories
+  LEGACY_DIRS=(
+    "$HOME/Throne"
+    "$HOME/throne"
+    "$HOME/NekoRay"
+    "$HOME/nekoray"
+  )
+
+  LEGACY_DESKTOPS=(
+    "$HOME/.local/share/applications/throne.desktop"
+    "$HOME/.local/share/applications/nekoray.desktop"
+  )
+
+  echo "Checking for legacy installations..."
+
+  # Check and remove legacy app directories
+  for LEGACY_DIR in "${LEGACY_DIRS[@]}"; do
+    if [ -d "$LEGACY_DIR" ]; then
+      echo "Found legacy installation directory: $LEGACY_DIR"
+      read -rp "Remove legacy installation in $LEGACY_DIR? (y/N): " confirm
+      if [[ "$confirm" =~ ^[Yy]$ ]]; then
+        echo "Removing legacy app directory: $LEGACY_DIR"
+        rm -rf "$LEGACY_DIR"
+        LEGACY_FOUND=true
+      else
+        echo "Skipping removal of $LEGACY_DIR"
+      fi
     fi
   done
 
-  # Remove desktop files
-  for APP_DESKTOP in "${APP_DESKTOPS[@]}"; do
-    if [ -f "$APP_DESKTOP" ]; then
-      echo "Removing desktop file: $APP_DESKTOP"
-      rm -f "$APP_DESKTOP"
+  # Check and remove legacy desktop files
+  for LEGACY_DESKTOP in "${LEGACY_DESKTOPS[@]}"; do
+    if [ -f "$LEGACY_DESKTOP" ]; then
+      echo "Found legacy desktop file: $LEGACY_DESKTOP"
+      echo "Removing legacy desktop file: $LEGACY_DESKTOP"
+      rm -f "$LEGACY_DESKTOP"
+      LEGACY_FOUND=true
     fi
   done
 
-  echo -e "\n${GREEN}✅ $APP_NAME has been successfully uninstalled.${NC}\n"
+  # Provide feedback based on what was found and removed
+  if [ "$PACKAGE_INSTALLED" = true ] && [ "$LEGACY_FOUND" = true ]; then
+    echo -e "\n${GREEN}✅ Both package installation and legacy installations have been removed.${NC}\n"
+  elif [ "$PACKAGE_INSTALLED" = true ]; then
+    echo -e "\n${GREEN}✅ Throne package has been successfully uninstalled.${NC}\n"
+  elif [ "$LEGACY_FOUND" = true ]; then
+    echo -e "\n${GREEN}✅ Legacy installations have been removed.${NC}\n"
+  else
+    echo -e "\n${YELLOW}⚠ No Throne installations found on this system.${NC}\n"
+  fi
 }
 
 # Enable hotspot function
