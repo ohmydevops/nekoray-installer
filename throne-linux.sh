@@ -5,7 +5,7 @@ set -euo pipefail
 THRONE_URL="https://api.github.com/repos/throneproj/Throne/releases/latest"
 THRONE_FILE_NAME="Throne"
 THRONE_DESKTOP_FILE="$HOME/.local/share/applications/throne.desktop"
-WGET_TIMEOUT=15
+CURL_TIMEOUT=15
 TMPDIR=$(mktemp -d)
 
 # Hotspot Configuration
@@ -173,7 +173,7 @@ install_app() {
   esac
 
   # Check for required commands
-  for cmd in wget $PACKAGE_MANAGER; do
+  for cmd in curl $PACKAGE_MANAGER; do
     if ! command -v $cmd &> /dev/null; then
       echo -e "${RED}$cmd is not installed.${NC}"
       echo -e "${RED}Install $cmd in your system.${NC}"
@@ -192,7 +192,7 @@ install_app() {
   echo -e "Fetching latest Throne release information..."
 
   # Get the latest release info and find the appropriate package URL
-  RELEASE_INFO=$(wget --timeout=$WGET_TIMEOUT -q -O- $THRONE_URL)
+  RELEASE_INFO=$(curl --max-time $CURL_TIMEOUT -s $THRONE_URL)
   PACKAGE_URL=$(echo "$RELEASE_INFO" | grep -E "browser_download_url.*$PACKAGE_PATTERN" | head -1 | cut -d '"' -f 4)
 
   if [ -z "$PACKAGE_URL" ]; then
@@ -206,7 +206,7 @@ install_app() {
   echo -e "Downloading $PACKAGE_NAME..."
 
   # Download the package
-  wget --timeout=$WGET_TIMEOUT -q --show-progress --progress=bar:force -O "$TMPDIR/$PACKAGE_NAME" "$PACKAGE_URL"
+  curl --max-time $CURL_TIMEOUT -L --progress-bar -o "$TMPDIR/$PACKAGE_NAME" "$PACKAGE_URL"
 
   echo -e "Installing Throne $PACKAGE_TYPE package..."
 

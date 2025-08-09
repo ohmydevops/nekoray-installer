@@ -7,7 +7,7 @@ THRONE_APP_NAME="Throne"
 THRONE_APP_PATH="/Applications/${THRONE_APP_NAME}.app"
 ARCH=$(uname -m)
 TMPDIR=$(mktemp -d)
-WGET_TIMEOUT=15
+CURL_TIMEOUT=15
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -77,7 +77,7 @@ install_app() {
   fi
 
   # Check for required commands
-  for cmd in unzip wget; do
+  for cmd in unzip curl; do
     if ! command -v $cmd &> /dev/null; then
       echo -e "${RED}Missing command: $cmd${NC}"
       echo -e "${RED}Install it with: brew install $cmd${NC}"
@@ -87,7 +87,7 @@ install_app() {
 
   # Fetch latest release download and install
   echo -e "Fetching latest ${THRONE_APP_NAME} release..."
-  DOWNLOAD_URL=$(wget --timeout=$WGET_TIMEOUT -q -O- "$THRONE_URL" \
+  DOWNLOAD_URL=$(curl --max-time $CURL_TIMEOUT -s "$THRONE_URL" \
     | grep -Eo "https.*${THRONE_APP_NAME}.*macos-${ARCH}\.zip" \
     | head -n 1)
 
@@ -97,8 +97,8 @@ install_app() {
   fi
 
   echo -e "Downloading from: $DOWNLOAD_URL"
-  wget --timeout=$WGET_TIMEOUT -q --show-progress --progress=bar:force \
-    -O "$TMPDIR/${THRONE_APP_NAME}.zip" "$DOWNLOAD_URL"
+  curl --max-time $CURL_TIMEOUT -L --progress-bar \
+    -o "$TMPDIR/${THRONE_APP_NAME}.zip" "$DOWNLOAD_URL"
 
   echo -e "Installing..."
   unzip -q "$TMPDIR/${THRONE_APP_NAME}.zip" -d "$TMPDIR"
