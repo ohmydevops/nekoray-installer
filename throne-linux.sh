@@ -46,7 +46,7 @@ show_banner() {
 
 EOF
   echo -e "${NC}"
-  echo -e "${BLUE}$THRONE_APP_NAME Installer for macOS${NC}\n\n\n"
+  echo -e "${BLUE}Throne Installer for macOS${NC}\n\n\n"
 }
 
 # Show main menu
@@ -84,16 +84,61 @@ run_cmd() {
     fi
 }
 
+# Function to check for existing installations
+check_installations() {
+    local app_name=${1:-"throne"}
+    local found=false
+
+    # Set app variants based on app name
+    if [[ "$app_name" == "throne" ]]; then
+        local app_variants=("throne" "Throne")
+    else
+        local app_variants=("nekoray" "NekoRay")
+    fi
+
+    # Check package installations
+    if dpkg -l | grep -q "$app_name" 2>/dev/null || rpm -q "$app_name" 2>/dev/null; then
+        echo -e "${YELLOW}$app_name package is installed.${NC}"
+        found=true
+    fi
+
+    # Check system locations
+    for variant in "${app_variants[@]}"; do
+        local system_locations=(
+            "/opt/$variant"
+            "/usr/share/applications/$variant.desktop"
+            "$HOME/.local/share/applications/$variant.desktop"
+            "$HOME/.config/$variant"
+        )
+
+        for location in "${system_locations[@]}"; do
+            if [ -d "$location" ] || [ -f "$location" ]; then
+                echo -e "${YELLOW}Found system installation: $location${NC}"
+                found=true
+            fi
+        done
+    done
+
+    # Return result (0 = found, 1 = not found)
+    if [ "$found" = true ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 # Install function
 install_app() {
   echo -e "${BLUE}=== INSTALLATION ===${NC}\n"
 
-  # Check if already installed
-  if dpkg -l | grep -q "throne" 2>/dev/null || rpm -q throne 2>/dev/null; then
-    echo -e "${YELLOW}Throne is already installed on your system.${NC}"
-    echo -e "${YELLOW}Please uninstall it first using your package manager.${NC}\n"
+  # Check for existing installations
+  echo "Checking for existing Throne installations..."
+  if check_installations "throne" || check_installations "nekoray"; then
+    echo -e "${YELLOW}Please uninstall existing Throne or NekoRay installations first using option 4 (Uninstall).${NC}\n"
     return 0
   fi
+
+  echo -e "${GREEN}✅ No existing installations found. Proceeding with installation...${NC}\n"
 
   # Detect Linux distribution
   if [ -f /etc/os-release ]; then
@@ -189,17 +234,12 @@ backup_config() {
   # Check for both old NekoRay and new Throne configs
   if [[ "$APP_NAME" == "nekoray" ]]; then
     # Support both old and new paths for NekoRay
-    if [ -d "$HOME/nekoray/nekoray/config" ]; then
-      CONFIG_DIR="$HOME/nekoray/nekoray/config"
-    elif [ -d "$HOME/NekoRay/nekoray/config" ]; then
-      CONFIG_DIR="$HOME/NekoRay/nekoray/config"
+    if [ -d "$HOME/.config/nekoray/config" ]; then
+      CONFIG_DIR="$HOME/.config/nekoray/config"
     fi
   elif [[ "$APP_NAME" == "throne" ]]; then
-    # New Throne path
-    if [ -d "$HOME/Throne/nekoray/config" ]; then
-      CONFIG_DIR="$HOME/Throne/nekoray/config"
-    elif [ -d "$HOME/throne/throne/config" ]; then
-      CONFIG_DIR="$HOME/throne/throne/config"
+    if [ -d "$HOME/.config/throne/config" ]; then
+      CONFIG_DIR="$HOME/.config/throne/config"
     fi
   fi
   BACKUP_NAME="${APP_NAME}-backup-$(date +%Y-%m-%d).zip"
@@ -248,20 +288,13 @@ restore_config() {
   # Determine restore directory based on app name and what's installed
   if [[ "$APP_NAME" == "nekoray" ]]; then
     # For NekoRay, check if new Throne is installed and use that, otherwise use old path
-    if [ -d "$HOME/Throne" ]; then
-      RESTORE_DIR="$HOME/Throne/nekoray/config"
-      echo "Note: Restoring NekoRay backup to Throne installation"
-    elif [ -d "$HOME/NekoRay" ]; then
-      RESTORE_DIR="$HOME/NekoRay/nekoray/config"
-    else
-      RESTORE_DIR="$HOME/nekoray/nekoray/config"
+    if [ -d "$HOME/.config/nekoray/" ]; then
+      RESTORE_DIR="$HOME/.config/nekoray/config"
     fi
   elif [[ "$APP_NAME" == "throne" ]]; then
     # For Throne, use the new path
-    if [ -d "$HOME/Throne" ]; then
-      RESTORE_DIR="$HOME/Throne/nekoray/config"
-    else
-      RESTORE_DIR="$HOME/throne/throne/config"
+    if [ -d "$HOME/.config/Throne/" ]; then
+      RESTORE_DIR="$HOME/.config/Throne/config"
     fi
   fi
 
@@ -290,71 +323,51 @@ restore_config() {
 uninstall_app() {
   echo -e "${BLUE}=== UNINSTALL ===${NC}\n"
 
-  # Check for package installations first
-  PACKAGE_INSTALLED=false
-  if dpkg -l | grep -q "throne" 2>/dev/null; then
-    echo "Removing Throne .deb package..."
-    sudo dpkg -r throne
-    PACKAGE_INSTALLED=true
-  elif rpm -q throne 2>/dev/null; then
-    echo "Removing Throne .rpm package..."
-    sudo rpm -e throne
-    PACKAGE_INSTALLED=true
+  get_app_name
+
+  echo -e "\nUninstalling $APP_NAME..."
+
+  # Check if any installations exist
+  if ! check_installations "$APP_NAME"; then
+    echo -e "\n${YELLOW}⚠ No $APP_NAME installations found on this system.${NC}\n"
+    return 0
   fi
 
-  # Check for legacy directory installations
-  LEGACY_FOUND=false
-
-  # Check for various possible legacy installation directories
-  LEGACY_DIRS=(
-    "$HOME/Throne"
-    "$HOME/throne"
-    "$HOME/NekoRay"
-    "$HOME/nekoray"
-  )
-
-  LEGACY_DESKTOPS=(
-    "$HOME/.local/share/applications/throne.desktop"
-    "$HOME/.local/share/applications/nekoray.desktop"
-  )
-
-  echo "Checking for legacy installations..."
-
-  # Check and remove legacy app directories
-  for LEGACY_DIR in "${LEGACY_DIRS[@]}"; do
-    if [ -d "$LEGACY_DIR" ]; then
-      echo "Found legacy installation directory: $LEGACY_DIR"
-      read -rp "Remove legacy installation in $LEGACY_DIR? (y/N): " confirm
-      if [[ "$confirm" =~ ^[Yy]$ ]]; then
-        echo "Removing legacy app directory: $LEGACY_DIR"
-        rm -rf "$LEGACY_DIR"
-        LEGACY_FOUND=true
-      else
-        echo "Skipping removal of $LEGACY_DIR"
-      fi
+  # Remove installations
+    if [[ "$APP_NAME" == "throne" ]]; then
+        local app_variants=("throne" "Throne")
+    else
+        local app_variants=("nekoray" "NekoRay")
     fi
-  done
 
-  # Check and remove legacy desktop files
-  for LEGACY_DESKTOP in "${LEGACY_DESKTOPS[@]}"; do
-    if [ -f "$LEGACY_DESKTOP" ]; then
-      echo "Found legacy desktop file: $LEGACY_DESKTOP"
-      echo "Removing legacy desktop file: $LEGACY_DESKTOP"
-      rm -f "$LEGACY_DESKTOP"
-      LEGACY_FOUND=true
+    # Remove package installations
+    if dpkg -l | grep -q "$APP_NAME" 2>/dev/null; then
+        echo "Removing $APP_NAME .deb package..."
+        sudo dpkg -r "$APP_NAME"
+    elif rpm -q "$APP_NAME" 2>/dev/null; then
+        echo "Removing $APP_NAME .rpm package..."
+        sudo rpm -e "$APP_NAME"
     fi
-  done
 
-  # Provide feedback based on what was found and removed
-  if [ "$PACKAGE_INSTALLED" = true ] && [ "$LEGACY_FOUND" = true ]; then
-    echo -e "\n${GREEN}✅ Both package installation and legacy installations have been removed.${NC}\n"
-  elif [ "$PACKAGE_INSTALLED" = true ]; then
-    echo -e "\n${GREEN}✅ Throne package has been successfully uninstalled.${NC}\n"
-  elif [ "$LEGACY_FOUND" = true ]; then
-    echo -e "\n${GREEN}✅ Legacy installations have been removed.${NC}\n"
-  else
-    echo -e "\n${YELLOW}⚠ No Throne installations found on this system.${NC}\n"
-  fi
+    # Remove installations
+    echo "Checking for $APP_NAME installations..."
+    for variant in "${app_variants[@]}"; do
+        local user_locations=(
+            "/opt/$variant"
+            "/usr/share/applications/$variant.desktop"
+            "$HOME/.local/share/applications/$variant.desktop"
+            "$HOME/.config/$variant"
+        )
+
+        for location in "${user_locations[@]}"; do
+            if [ -d "$location" ] || [ -f "$location" ]; then
+                sudo rm -rf "$location"
+            fi
+        done
+    done
+
+    # Provide feedback
+    echo -e "\n${GREEN}✅ $APP_NAME installations have been removed.${NC}\n"
 }
 
 # Enable hotspot function
