@@ -238,7 +238,7 @@ backup_config() {
       CONFIG_DIR="$HOME/.config/nekoray/config"
     fi
   elif [[ "$APP_NAME" == "throne" ]]; then
-    if [ -d "$HOME/.config/throne/config" ]; then
+    if [ -d "$HOME/.config/Throne/config" ]; then
       CONFIG_DIR="$HOME/.config/Throne/config"
     fi
   fi
