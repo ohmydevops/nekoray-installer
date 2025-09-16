@@ -239,7 +239,7 @@ backup_config() {
     fi
   elif [[ "$APP_NAME" == "throne" ]]; then
     if [ -d "$HOME/.config/throne/config" ]; then
-      CONFIG_DIR="$HOME/.config/throne/config"
+      CONFIG_DIR="$HOME/.config/Throne/config"
     fi
   fi
   BACKUP_NAME="${APP_NAME}-backup-$(date +%Y-%m-%d).zip"
