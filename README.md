@@ -1,3 +1,16 @@
+# 📦 Archived Project
+
+> **This project is now archived and will remain available for historical/reference purposes only.**
+>
+> Since recent versions of Throne now include most of the features and functionality that were previously missing, there is no longer a strong need for maintaining these external installer and management scripts.
+>
+> We recommend using the official Throne project directly for the best and most up-to-date experience:
+> https://github.com/throneproj/Throne
+>
+> This repository will stay online as an archive for users who may still find parts of it useful.
+>
+> Hope for a free and open internet in Iran.
+
 # Throne Installer & Management Tools
 
 Cross-platform installer and management tools for [Throne](https://github.com/throneproj/Throne) - the next-generation proxy client. This repository provides comprehensive scripts for installation, configuration management, and advanced features across Linux, macOS, and Windows.
